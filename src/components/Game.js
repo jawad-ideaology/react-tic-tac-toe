@@ -1,38 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
     calculateWinner,
     getErrorMessage,
     injected,
     useEagerConnect,
     useInactiveListener,
-} from "../utils/helper";
-import Board from "./Board";
+} from '../utils/helper';
+import Board from './Board';
 
-import Player1Service from "../services/player1Service";
-import Services from "../services/services";
-import AdminServices from "../services/adminService";
-import { ethToWei, weiToEth } from "../utils/helper";
-import { useWeb3React } from "@web3-react/core";
+import Player1Service from '../services/player1Service';
+import Services from '../services/services';
+import AdminServices from '../services/adminService';
+import { ethToWei, weiToEth } from '../utils/helper';
+import { useWeb3React } from '@web3-react/core';
 
 const Game = () => {
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [stepNumber, setStepNumber] = useState(0);
     const [xIsNext, setXisNext] = useState(true);
     const winner = calculateWinner(history[stepNumber]);
-    const xO = xIsNext ? "X" : "O";
+    const xO = xIsNext ? 'X' : 'O';
 
     const [player1Info, setPlayer1Info] = useState({
         inGameBalance: 0,
-        accountAddress: "",
-        status: "idle",
+        accountAddress: '',
+        status: 'idle',
     });
     const [loading, setLoading] = useState(false);
     const [reload, setReload] = useState(false);
 
     const [player2Info, setPlayer2Info] = useState({
         inGameBalance: 0,
-        accountAddress: "",
-        status: "idle",
+        accountAddress: '',
+        status: 'idle',
     });
     const [loading2, setLoading2] = useState(false);
     const [trasfering, settTasfering] = useState(false);
@@ -52,7 +52,7 @@ const Game = () => {
         library: provider,
     } = context;
 
-    console.log("account", account);
+    // console.log("account", account);
 
     const [activatingConnector, setActivatingConnector] = React.useState();
     React.useEffect(() => {
@@ -77,7 +77,7 @@ const Game = () => {
         if (!!error) {
             const errorMessage = !!error && getErrorMessage(error);
             if (errorMessage) {
-                console.log("Metamask errorMessage", errorMessage);
+                console.log('Metamask errorMessage', errorMessage);
             }
         }
     }, [error]);
@@ -93,7 +93,7 @@ const Game = () => {
         setPlayer1Info({
             accountAddress: player1Service.wallet.address,
             inGameBalance: Number(inGameBalance),
-            status: "fetched",
+            status: 'fetched',
         });
     };
 
@@ -104,23 +104,23 @@ const Game = () => {
             account,
             process.env.REACT_APP_CONTRACT_ADDRESS
         );
-        console.log("player2Service", player2Service);
+        // console.log('player2Service', player2Service);
         const getBalance = await player2Service.getBalance(account);
         const inGameBalance = weiToEth(getBalance);
 
         setPlayer2Info({
             accountAddress: account,
             inGameBalance: Number(inGameBalance),
-            status: "fetched",
+            status: 'fetched',
         });
     };
 
     // To fetch Data
     useEffect(() => {
-        if (player1Info.status === "idle") {
+        if (player1Info.status === 'idle') {
             setLoading(true);
             getPlayer1Info()
-                .catch((err) => console.log("err"))
+                .catch((err) => console.log('err'))
                 .finally(() => setLoading(false));
         }
     }, []);
@@ -130,7 +130,7 @@ const Game = () => {
         if (account && provider) {
             setLoading2(true);
             getPlayer2Info()
-                .catch((err) => console.log("err"))
+                .catch((err) => console.log('err'))
                 .finally(() => setLoading2(false));
         }
     }, [account, provider]);
@@ -149,7 +149,7 @@ const Game = () => {
         const adminService = new AdminServices(
             process.env.REACT_APP_CONTRACT_ADDRESS
         );
-        console.log("adminService", adminService);
+        // console.log('adminService', adminService);
         // const _amount = ethToWei("0.002");
         // console.log("_amount", _amount);
 
@@ -157,7 +157,7 @@ const Game = () => {
 
         const getReceipt = await transfer.wait();
         if (getReceipt.status !== 1) {
-            alert("Failed to transfer Eth");
+            alert('Failed to transfer Eth');
             settTasfering(false);
             return;
         }
@@ -170,17 +170,17 @@ const Game = () => {
     // Checking winner or draw condition
     useEffect(() => {
         if (winner) {
-            if (xO === "O") {
+            if (xO === 'O') {
                 allocatingEthToWinner(player1Info.accountAddress);
-                alert("Player1 Win");
+                alert('Player1 Win');
             } else {
                 allocatingEthToWinner(player2Info.accountAddress);
-                alert("Player2 Win");
+                alert('Player2 Win');
             }
             return;
         }
         if (stepNumber === 9) {
-            alert("Draw");
+            alert('Draw');
         }
         // if (squares[i]) {
         //     alert("Draw");
@@ -192,16 +192,16 @@ const Game = () => {
     const withdrawMoney = async (_amount) => {
         try {
             if (!account || !provider) {
-                alert("No account or provider");
+                alert('No account or provider');
                 return;
             }
             if (loading || loading2) {
-                alert("Please wait! loading data");
+                alert('Please wait! loading data');
                 return;
             }
 
             if (trasfering) {
-                alert("Transfer in process");
+                alert('Transfer in process');
                 return;
             }
             settTasfering(true);
@@ -211,12 +211,12 @@ const Game = () => {
                 process.env.REACT_APP_CONTRACT_ADDRESS
             );
             const toWithdraw = ethToWei(_amount);
-            console.log("toWithdraw", toWithdraw);
+            // console.log('toWithdraw', toWithdraw);
             const tx = await player2Service.withdrawMoney(toWithdraw);
-            console.log("tx", tx);
+            // console.log('tx', tx);
             const getReceipt = await tx.wait();
             if (getReceipt.status !== 1) {
-                alert("Call Failed");
+                alert('Call Failed');
                 return;
             } else {
                 setReload(true);
@@ -230,8 +230,8 @@ const Game = () => {
             } else if (error.message) {
                 alert(error.message);
             } else {
-                alert("Check console for message");
-                console.log("Error", error);
+                alert('Check console for message');
+                console.log('Error', error);
             }
             // console.log("err in withdraw", error);
         }
@@ -240,16 +240,16 @@ const Game = () => {
     // Moves manage
     const handleClick = (i) => {
         if (!account) {
-            alert("Coneect metamask to play");
+            alert('Coneect metamask to play');
             return;
         }
         if (loading || loading2) {
-            alert("Please wait! loading data");
+            alert('Please wait! loading data');
             return;
         }
 
         if (trasfering) {
-            alert("Transfer in process");
+            alert('Transfer in process');
             return;
         }
         const historyPoint = history.slice(0, stepNumber + 1);
@@ -270,16 +270,16 @@ const Game = () => {
     const transferToContract = async () => {
         try {
             if (!account && !provider) {
-                alert("No account or provider");
+                alert('No account or provider');
                 return;
             }
             if (loading || loading2) {
-                alert("Please wait! loading data");
+                alert('Please wait! loading data');
                 return;
             }
 
             if (trasfering) {
-                alert("Transfer in process");
+                alert('Transfer in process');
                 return;
             }
             settTasfering(true);
@@ -287,7 +287,7 @@ const Game = () => {
             //     process.env.REACT_APP_CONTRACT_ADDRESS
             // );
             const singer = await provider.getSigner();
-            console.log("signer", singer);
+            // console.log('signer', singer);
 
             const toTransfer = ethToWei(0.02);
             // console.log("toTransfer", toTransfer);
@@ -296,25 +296,25 @@ const Game = () => {
                 to: process.env.REACT_APP_CONTRACT_ADDRESS,
                 value: toTransfer,
             });
-            console.log("sendTransaction", sendTransaction);
+            // console.log('sendTransaction', sendTransaction);
             const getReceipt = await sendTransaction.wait();
             if (getReceipt.status !== 1) {
-                alert("Call Failed");
+                alert('Call Failed');
                 return;
             } else {
                 setReload(true);
             }
             settTasfering(false);
         } catch (error) {
-            console.log("error in transfer to contract function");
+            console.log('error in transfer to contract function');
             console.log(error);
             if (error.reason) {
                 alert(error.reason);
             } else if (error.message) {
                 alert(error.message);
             } else {
-                alert("Check console for message");
-                console.log("Error", error);
+                alert('Check console for message');
+                console.log('Error', error);
             }
         }
     };
@@ -322,12 +322,12 @@ const Game = () => {
     // Reset board
     const reset = () => {
         if (loading || loading2) {
-            alert("Please wait! loading data");
+            alert('Please wait! loading data');
             return;
         }
 
         if (trasfering) {
-            alert("Transfer in process");
+            alert('Transfer in process');
             return;
         }
         setHistory([Array(9).fill(null)]);
@@ -415,7 +415,7 @@ const Game = () => {
             </div>
             <Board squares={history[stepNumber]} onClick={handleClick} />
             <div className="info-wrapper">
-                <h3>{winner ? "Winner: " + winner : "Next Player: " + xO}</h3>
+                <h3>{winner ? 'Winner: ' + winner : 'Next Player: ' + xO}</h3>
                 {winner && <button onClick={reset}>Play again</button>}
                 {stepNumber === 9 && (
                     <button className="info-button" onClick={reset}>
