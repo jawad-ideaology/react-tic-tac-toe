@@ -308,6 +308,7 @@ const Game = () => {
         } catch (error) {
             console.log('error in transfer to contract function');
             console.log(error);
+            settTasfering(false);
             if (error.reason) {
                 alert(error.reason);
             } else if (error.message) {
