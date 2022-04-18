@@ -203,7 +203,7 @@ const Game = () => {
                 alert('Transfer in process');
                 return;
             }
-            if(_amount > 0.002){
+            if(_amount < 0.002){
                 alert('Minimum 0.002 eth required to withdraw');
                 return;
             }
