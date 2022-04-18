@@ -418,21 +418,12 @@ const Game = () => {
             <div className="info-wrapper">
                 <h3>{winner ? 'Winner: ' + winner : 'Next Player: ' + xO}</h3>
                 {winner && <button onClick={reset}>Play again</button>}
-                {stepNumber === 9 && (
+                {!winner && stepNumber === 9 && (
                     <button className="info-button" onClick={reset}>
                         Play again
                     </button>
                 )}
             </div>
-            {/* <button
-                onClick={() =>
-                    allocatingEthToWinner(
-                        "0xd6C789177B31Fc174eaBfb071faD8cF955171323"
-                    )
-                }
-            >
-                Check Admin
-            </button> */}
         </>
     );
 };
