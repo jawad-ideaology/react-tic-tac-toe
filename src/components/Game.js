@@ -199,9 +199,12 @@ const Game = () => {
                 alert('Please wait! loading data');
                 return;
             }
-
             if (trasfering) {
                 alert('Transfer in process');
+                return;
+            }
+            if(_amount > 0.002){
+                alert('Minimum 0.002 eth required to withdraw');
                 return;
             }
             settTasfering(true);
